@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nitstone Finserv Digital Audit</title>
+<!--
+  AUDIT DECK ENGINE - extracted verbatim from the White Puppies Realty audit (July 2026),
+  which is the house layout reference for every /audit-* skill.
+
+  DO NOT rebuild this from a credentials deck or any print-oriented template.
+  A credentials deck is a stack of 1920x1080 print pages. An audit deck is a
+  1280x720 keyboard-driven presentation. They are not interchangeable.
+
+  Engine contract (leave all of it alone):
+    - #stage is 1280x720 and scales to fit the viewport
+    - arrow keys / space / PageUp / PageDown move slide to slide, Home / End jump
+    - F toggles fullscreen, #bar is the progress bar, location.hash tracks position
+    - one <section class="slide"> per slide, only .on is visible
+
+  Per-client swap: --red / --blue tokens, the logo, the font, Nitstone Finserv Digital Audit. Nothing else.
+
+  Slide anatomy:
+    <section class="slide"><img class="slogo" src="LOGO"><div class="pageno">NN / TT</div>
+      <div class="inner">            (or "inner vc" to centre vertically)
+        <div class="kicker red">SECTION-NO &middot; SECTION-NAME</div>
+        <h2>Headline, <em>red for the sharp half</em>.</h2>
+        <p class="lead">One paragraph of read. Never more than two.</p>
+        ... exactly ONE visual device: .stats | .split+.shot | .pts | .cards3 | .ba | .mx
+        <div class="bignote">The punch line. <span>Red for the number.</span></div>
+      </div></section>
+
+  Devices available (see the CSS): .stats .stat, .split(.lean|.wide), .shot, .cap,
+  .pts .pt, .cards3 .card, .chips .chip, .stack, .ba, .pins .pin, .mx, .journey,
+  .tilegrid .tile, .cmp table, .bignote, .todo (dashed red placeholder box).
+-->
+<style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+.cover .titlewrap{}
+.cvlogos{position:absolute;top:48px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:center}
+.cvlogos img{height:70px}.cvlogos img+img{height:92px}
+.slide.cover .kicker{margin-top:40px}
+.cover{position:absolute;inset:0;padding:0 96px;display:flex;flex-direction:column;justify-content:center}
+.cover .titlefoot{left:96px;right:96px}
+.stgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.st{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;text-decoration:none;color:var(--ink);transition:transform .2s ease}
+.st:hover{transform:translateY(-2px)}.st img,.phead img{width:auto!important;align-self:flex-start;flex:none}
+.stn{font-size:14px;font-weight:700;margin-top:4px}.sth{font-size:12px;color:var(--grey)}
+.sts{font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--blue)}.sts.red{color:var(--red)}.sts span{font-size:12px;color:var(--soft);font-weight:600;margin-left:3px}
+.stats.two{grid-template-columns:1fr 1fr;margin-top:6px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quote{margin-top:22px;border-left:3px solid var(--red);padding:6px 0 6px 16px;font-size:17px;font-weight:600;line-height:1.45;color:var(--ink)}
+.quote span{display:block;font-size:12px;font-weight:500;color:var(--grey);margin-top:8px}
+.f4{display:grid;grid-template-columns:1fr;gap:10px}
+.f4>div{border-top:1px solid var(--line);padding-top:9px}
+.f4 h6{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
+.f4 p{font-size:13px;line-height:1.55;color:var(--ink)}
+.f4 .na p{font-size:20px;font-weight:800;letter-spacing:-.02em}.f4 .na s{color:var(--soft);text-decoration:none}.f4 .na i{color:var(--red);font-style:normal}.f4 .na b{color:var(--red)}
+.phead{display:flex;align-items:center;gap:16px}
+.phandle{font-size:22px;font-weight:700;letter-spacing:-.02em;flex:1}
+.pscore b{font-size:54px;font-weight:800;letter-spacing:-.04em;color:var(--red);line-height:1}.pscore span{font-size:14px;color:var(--soft);font-weight:600;margin-left:4px}
+.pnums{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0 8px}
+.pnums div{border-top:2px solid var(--line);padding-top:8px}.pnums b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}.pnums span{font-size:11.5px;color:var(--grey)}
+.plist{margin:18px 0 0 18px;counter-reset:none}.plist li{font-size:15px;font-weight:600;line-height:1.45;padding:6px 0 6px 6px;color:var(--ink)}.plist li::marker{color:var(--red);font-weight:800}
+.chart .cv{font-size:12px;font-weight:700;fill:#0F0F0F}.chart .cl{font-size:10px;fill:#5A6B82}
+.legend{display:flex;gap:18px;margin-top:6px;font-size:12px;color:var(--grey)}.legend .sw{margin-right:6px;vertical-align:-1px}.sw.g{background:#DCE2EB}
+.gen{border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#F3F4F8;height:420px}
+.gen img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.gen.tall{height:500px}
+.gen.white{background:#fff}
+.gencap{font-size:12.5px;line-height:1.55;color:var(--grey);margin-top:10px}
+.mock2{margin-top:18px}
+.igmock{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;font-size:13px;line-height:1.5;color:var(--ink);min-height:188px}
+.igmock.good{border-color:var(--red)}
+.igtop{display:flex;gap:12px;align-items:center;margin-bottom:10px}.igtop img{width:44px;height:44px;border-radius:50%}.igtop b{display:block;font-size:14px}.igtop span{font-size:11.5px;color:var(--grey)}
+.ign{font-weight:700}.igl{color:var(--blue);font-weight:600}
+.igbtn{display:flex;gap:8px;margin-top:10px}.igbtn span{flex:1;text-align:center;background:var(--surface);border-radius:8px;padding:6px;font-weight:600;font-size:12px}
+.phoneshot .shot{width:230px;margin:0 auto}
+.bigwrap{display:flex;flex-direction:column;justify-content:center;height:100%}
+.bignum{font-size:210px;font-weight:800;letter-spacing:-.06em;line-height:.9;color:var(--red)}.bignum span{font-size:80px;margin-left:6px}
+.codebox{background:#0F0F0F;color:#fff;border-radius:14px;padding:22px 24px;font-size:14px;line-height:1.5;display:flex;flex-direction:column;gap:4px}
+.codebox .k{color:#AFAFAF}.codebox .bad{color:#ff8a8d;margin-bottom:10px;font-size:12.5px}.codebox .ok{color:#8fd1b3;font-size:12.5px}
+.pts.one{grid-template-columns:1fr;gap:14px;margin-top:0}
+.lead.sm{font-size:14px;margin:14px 0 10px}
+.nap{border-collapse:collapse;width:100%;font-size:12.5px}.nap th{text-align:left;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);padding:4px 8px;border-bottom:2px solid var(--red)}.nap td{padding:5px 8px;border-bottom:1px solid var(--line)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.pgrid div{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}.pgrid b{font-size:22px;font-weight:800}.pgrid span{font-size:12px;color:var(--grey)}
+.adrow{display:flex;flex-direction:column;gap:6px}
+.cmp.adt tbody td{font-size:14px;font-weight:600;color:var(--ink)}.cmp td.bad{color:var(--red);font-weight:800}
+.cmp.bench tbody th{font-size:12.5px}.cmp.bench tbody td{font-size:11.5px}.cmp.bench tbody tr:first-child th,.cmp.bench tbody tr:first-child td{color:var(--red);font-weight:700}
+.concept{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.concept div{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.concept h6{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:6px}.concept p{font-size:13.5px;line-height:1.5;font-weight:500}
+.rail{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:26px;position:relative}
+.rail::before{content:'';position:absolute;top:10px;left:0;right:0;height:3px;background:var(--line)}
+.ph{position:relative;padding:34px 22px 0 0}.ph::before{content:'';position:absolute;top:3px;left:0;width:17px;height:17px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 0 0 2px var(--red)}
+.ph:nth-child(2)::before{background:var(--blue);box-shadow:0 0 0 2px var(--blue)}.ph:nth-child(3)::before{background:#0F0F0F;box-shadow:0 0 0 2px #0F0F0F}
+.phw{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}.ph h4{font-size:19px;font-weight:700;margin:4px 0 10px;letter-spacing:-.015em}
+.ph ol{margin-left:18px}.ph li{font-size:13px;line-height:1.5;color:var(--grey);padding:3px 0}.ph li::marker{color:var(--red);font-weight:700}
+.slide.dark .kicker{color:var(--red)}.slide.dark h2{color:#fff}
+.need{margin:26px 0 0 22px}.need li{font-size:19px;line-height:1.5;padding:8px 0;color:#e8e8e8}.need li::marker{color:var(--red);font-weight:800}
+.blank{color:#ff6b6f;font-weight:700}
+.cmp.apx tbody th{width:110px;vertical-align:top;padding-top:10px}.cmp.apx td.sc{font-size:22px;font-weight:800;color:var(--red);width:60px;vertical-align:top}.cmp.apx td.why{text-align:left;font-size:12.5px;line-height:1.55;color:var(--grey);padding:10px 12px}
+
+
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#BD272B;--blue:#24395C;--ink:#0F0F0F;--grey:#5A6B82;--soft:#8A94A6;--line:#DCE2EB;--surface:#F5F7FB} /* Tempest palette: resources/tempest-brand/TEMPEST-COLORS.md (--blue holds navy) */
+html,body{height:100%;background:#101114;overflow:hidden;font-family:'Poppins',system-ui,-apple-system,sans-serif}
+#stage{position:absolute;top:50%;left:50%;width:1280px;height:720px;transform-origin:center;background:#fff;box-shadow:0 40px 120px rgba(0,0,0,.55)}
+.slide{position:absolute;inset:0;background:#fff;color:var(--ink);opacity:0;visibility:hidden;transform:translateY(26px);transition:opacity .45s cubic-bezier(.22,1,.36,1),transform .45s cubic-bezier(.22,1,.36,1),visibility 0s .45s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .45s cubic-bezier(.22,1,.36,1),transform .45s cubic-bezier(.22,1,.36,1)}
+.inner{position:absolute;inset:0;padding:64px 68px 58px}
+.inner.vc{display:flex;flex-direction:column;justify-content:flex-start;padding-top:104px;padding-bottom:58px} /* one kicker baseline on every content slide */
+.slide.closing .inner.vc{justify-content:center;padding-top:64px}
+.slogo{position:absolute;top:30px;left:68px;height:24px;z-index:2}
+.pageno{position:absolute;bottom:26px;right:68px;font-size:11px;letter-spacing:.14em;color:var(--soft);font-weight:500}
+
+/* type */
+.kicker{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--soft);margin-bottom:18px}
+.kicker.red{color:var(--red)}
+h2{font-size:40px;line-height:1.16;font-weight:700;letter-spacing:-.022em;margin-bottom:18px}
+h2.tight{margin-bottom:10px;font-size:30px}
+h2 em,.statement em,h1 em,.closeline em{font-style:normal;color:var(--red)}
+.lead{font-size:16.5px;line-height:1.65;color:var(--grey);max-width:820px;font-weight:400}
+.lead.wide{max-width:900px}
+.label{font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--soft);margin:26px 0 12px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{font-size:13px;font-weight:500;color:var(--ink);border:1px solid var(--line);background:#fff;border-radius:999px;padding:7.5px 15px;white-space:nowrap}
+.chips.dim .chip{color:var(--grey)}
+.chip.big{font-size:14.5px;padding:11px 20px;border-color:var(--line);background:var(--surface);font-weight:600}
+.chip.plat{border-color:var(--blue);color:var(--blue);font-weight:600}
+
+/* title slide */
+.titlewrap{position:absolute;inset:0;padding:0 96px;display:flex;flex-direction:column;justify-content:center}
+.titlewrap .kicker{margin-bottom:26px}
+h1{font-size:78px;line-height:1.04;font-weight:800;letter-spacing:-.03em}
+.bracket{position:relative;padding:26px 0 26px 34px}
+.bracket::before{content:'';position:absolute;left:0;top:0;width:44px;height:44px;border-left:4px solid var(--blue);border-top:4px solid var(--blue)}
+.bracket::after{content:'';position:absolute;left:0;bottom:0;width:44px;height:44px;border-left:4px solid var(--blue);border-bottom:4px solid var(--blue)}
+.titlesub{font-size:19px;color:var(--grey);margin-top:26px;font-weight:400;letter-spacing:-.005em}
+.titlefoot{position:absolute;bottom:44px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--grey)}
+.titlefoot strong{color:var(--ink);font-weight:600}
+.hint{font-size:11.5px;color:var(--soft);letter-spacing:.06em}
+.titlewrap::before{content:'';position:absolute;top:0;right:0;width:340px;height:100%;background:
+radial-gradient(ellipse 90% 60% at 100% 0%,rgba(189,39,43,.07),transparent 60%),
+radial-gradient(ellipse 70% 50% at 100% 100%,rgba(36,57,92,.06),transparent 60%)}
+.titlelogo{position:absolute;top:52px;left:96px;height:34px;z-index:3}
+
+/* journey strip */
+.journey{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.journey span{font-size:15px;font-weight:600;border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;background:#fff}
+.journey span.hot{background:var(--red);border-color:var(--red);color:#fff}
+.journey i{font-style:normal;color:var(--red);font-weight:700;font-size:16px}
+
+/* cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.card{border:1px solid var(--line);border-radius:16px;padding:24px 24px 22px;background:#fff;position:relative}
+.card::before{content:'';position:absolute;top:0;left:24px;width:34px;height:3px;background:var(--red);border-radius:0 0 3px 3px}
+.cardnum{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--red);margin-bottom:12px;text-transform:uppercase}
+.card h3{font-size:18.5px;font-weight:600;letter-spacing:-.015em;line-height:1.3;margin-bottom:9px}
+.card p{font-size:13.5px;line-height:1.6;color:var(--grey)}
+.cards3.pk .card{padding:26px}
+.card .focus{margin-top:16px;font-size:12px;font-weight:600;color:var(--ink);background:var(--surface);border-radius:8px;padding:9px 12px}
+.card.p1::before{background:var(--blue)}.card.p1 .cardnum{color:var(--blue)}
+.card.p2::before{background:var(--red)}.card.p2 .cardnum{color:var(--red)}
+.card.p3::before{background:var(--ink)}.card.p3 .cardnum{color:var(--ink)}
+
+/* ecosystem tiles */
+.tilegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px}
+.tile{border:1px solid var(--line);border-radius:14px;padding:18px 16px;min-height:136px;display:flex;flex-direction:column;gap:10px;background:#fff}
+.tile .tl{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.tile .tl.red{color:var(--red)}.tile .tl.blue{color:var(--blue)}
+.tile span:last-child{font-size:13.5px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+
+/* pillar slides */
+.pillar{display:grid;grid-template-columns:360px 1fr;gap:56px;height:calc(100% - 46px);align-items:center}
+.bigletter{font-size:150px;line-height:.85;font-weight:800;letter-spacing:-.02em;color:transparent;margin-bottom:22px;margin-left:-6px}
+.bigletter.red{-webkit-text-stroke:2.5px var(--red)}
+.bigletter.blue{-webkit-text-stroke:2.5px var(--blue)}
+.pname{font-size:29px;margin-bottom:14px}
+.pdesc{font-size:15px;line-height:1.65;color:var(--grey)}
+.pright .label{margin-top:26px}
+.pright .label:first-child{margin-top:0}
+
+/* sub columns (pillar C) */
+.subcols{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.subcol .label{margin:0 0 12px}
+.dotlist{list-style:none}
+.dotlist li{font-size:13px;color:var(--grey);font-weight:500;padding:5px 0 5px 16px;position:relative;line-height:1.4}
+.dotlist li::before{content:'';position:absolute;left:0;top:11px;width:5px;height:5px;border-radius:50%;background:var(--red)}
+
+/* package detail */
+.pkhead{display:flex;gap:24px;align-items:flex-start;margin-bottom:8px;margin-top:20px}
+.pknum{font-size:56px;font-weight:800;line-height:1;padding-top:2px}
+.pknum.p1{color:var(--blue)}.pknum.p2{color:var(--red)}.pknum.p3{color:var(--ink)}
+.pkname{font-size:31px;margin-bottom:8px}
+.pkfor{font-size:13.5px;line-height:1.55;color:var(--grey);max-width:760px}
+.pkfor strong{color:var(--ink);font-weight:600}
+.pkbody{display:grid;grid-template-columns:1fr 330px;gap:44px;margin-top:22px}
+.pkleft{columns:2;column-gap:36px}
+.plusline{font-size:12.5px;font-weight:700;color:var(--red);letter-spacing:.02em;margin-bottom:14px;column-span:all}
+.grp{break-inside:avoid;margin-bottom:19px}
+.grp h4{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.grp p{font-size:13px;line-height:1.7;color:var(--grey)}
+.pkright{background:var(--surface);border-radius:18px;padding:24px;align-self:start}
+.pkright .label{margin:0 0 12px}
+.pkright .label+.label{margin-top:22px}
+.pkright .outcomes+.label,.pkright .barleg+.label,.pkright .focustext+.label{margin-top:22px}
+.bar{display:flex;height:34px;border-radius:9px;overflow:hidden;font-size:12.5px;font-weight:700;color:#fff}
+.bar span{background:var(--red);display:flex;align-items:center;justify-content:center}
+.bar span.b2{background:var(--blue)}
+.barleg{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.barleg span{font-size:12px;color:var(--grey);font-weight:500;display:flex;align-items:center;gap:7px}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sw.r{background:var(--red)}.sw.b{background:var(--blue)}
+.focustext{font-size:13px;line-height:1.6;color:var(--ink);font-weight:500}
+.outcomes{list-style:none}
+.outcomes li{font-size:13px;font-weight:500;color:var(--ink);padding:4.5px 0 4.5px 24px;position:relative;line-height:1.45}
+.outcomes li::before{content:'✓';position:absolute;left:0;color:var(--red);font-weight:700}
+
+/* comparison table */
+.cmp{width:100%;border-collapse:collapse;margin-top:2px}
+.cmp thead th{font-size:13.5px;font-weight:700;text-align:center;padding:0 10px 8px;letter-spacing:-.01em}
+.cmp thead th span{display:block;font-size:10px;font-weight:600;color:var(--soft);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.cmp thead th.h1{border-bottom:3px solid var(--blue)}
+.cmp thead th.h2c{border-bottom:3px solid var(--red)}
+.cmp thead th.h3c{border-bottom:3px solid var(--ink)}
+.cmp tbody th{font-size:12.5px;font-weight:600;text-align:left;padding:5.5px 12px;color:var(--ink);letter-spacing:-.005em}
+.cmp tbody td{font-size:12px;font-weight:500;text-align:center;padding:5.5px 10px;color:var(--grey)}
+.cmp tbody tr:nth-child(odd){background:var(--surface)}
+.cmp td.yes{color:var(--red);font-weight:700;font-size:13px}
+.cmp td.no{color:#BABABA}
+
+/* why slide */
+.statement{font-size:46px;margin:30px 0 24px}
+.fourup{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px}
+.fourup div{border-top:3px solid var(--red);padding-top:14px;font-size:15.5px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.fourup div:nth-child(2n){border-top-color:var(--blue)}
+.fourup span{display:block;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin-bottom:6px}
+
+/* close slide */
+.slide.dark{background:#0F0F0F;color:#fff}
+.closewrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:34px}
+.closewrap::before{content:'';position:absolute;inset:0;background:
+radial-gradient(ellipse 60% 50% at 50% 110%,rgba(189,39,43,.16),transparent 65%),
+radial-gradient(ellipse 45% 35% at 85% 0%,rgba(36,57,92,.14),transparent 60%)}
+.logocard{background:#fff;border-radius:14px;padding:14px 22px;position:relative}
+.logocard img{height:30px;display:block}
+.closeline{font-size:62px;position:relative}
+.closefoot{font-size:14px;color:#9a9da4;position:relative}
+.closefoot .red{color:var(--red);font-weight:600}
+
+/* nav ui */
+#bar{position:absolute;top:0;left:0;height:3px;background:var(--red);width:0;transition:width .45s cubic-bezier(.22,1,.36,1);z-index:5}
+#nav{position:absolute;inset:0;pointer-events:none;z-index:5;transition:opacity .3s ease} /* nav lives in the side gutters, never a corner (corners are furniture) */
+#nav button{position:absolute;top:50%;margin-top:-17px;pointer-events:auto}
+#prev{left:14px}#next{right:14px}
+#nav.hide{opacity:0;pointer-events:none}
+#nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s ease,opacity .15s ease}
+#nav button:hover{background:var(--red);border-color:var(--red);color:#fff}
+#nav button:active{transform:scale(.92)}
+#nav button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.slide.dark ~ #nav button{background:transparent}
+
+
+/* --- audit deck additions --- */
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);display:block}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.shot.contain img{object-fit:contain;background:#0e0e0e}
+.cap{font-size:10.5px;color:var(--soft);font-weight:500;margin-top:7px;letter-spacing:.01em}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
+.split.lean{grid-template-columns:1.15fr .85fr}
+.split.wide{grid-template-columns:.85fr 1.15fr}
+
+/* stat tiles */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:20px 18px;background:#fff;position:relative}
+.stat::before{content:'';position:absolute;top:0;left:18px;width:30px;height:3px;background:var(--line);border-radius:0 0 3px 3px}
+.stat.hot::before{background:var(--red)}
+.stat .sn{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat .sn.red{color:var(--red)}.stat .sn.soft{color:#AFAFAF}
+.stat .sp{font-size:12.5px;font-weight:700;margin-top:9px;letter-spacing:-.01em}
+.stat .ss{font-size:11.5px;color:var(--grey);margin-top:3px;line-height:1.4}
+.bignote{margin-top:24px;font-size:15px;font-weight:600;border-left:3px solid var(--red);padding:4px 0 4px 15px;letter-spacing:-.01em}
+.bignote span{color:var(--red)}
+
+/* numbered points */
+.pts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px}
+.pt{border-top:2px solid var(--line);padding-top:13px}
+.pt.r{border-top-color:var(--red)}.pt.b{border-top-color:var(--blue)}
+.pt h4{font-size:14.5px;font-weight:700;letter-spacing:-.015em;margin-bottom:6px;line-height:1.3}
+.pt p{font-size:12.5px;line-height:1.6;color:var(--grey)}
+
+/* stacked list */
+.stack{list-style:none;margin-top:6px}
+.stack li{font-size:13px;line-height:1.5;color:var(--grey);padding:7px 0 7px 17px;position:relative;border-bottom:1px solid var(--line)}
+.stack li:last-child{border-bottom:0}
+.stack li::before{content:'';position:absolute;left:0;top:14px;width:5px;height:5px;border-radius:50%;background:var(--red)}
+.stack li b{color:var(--ink);font-weight:600}
+.stack.blue li::before{background:var(--blue)}
+
+/* before / after */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ba .tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;color:var(--soft)}
+.ba .tag.now{color:var(--soft)}
+.ba .tag.next{color:var(--red)}
+
+/* pin row */
+.pins{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.pin{border:1px solid var(--line);border-radius:12px;padding:15px 14px;background:#fff}
+.pin .pnum{font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--red);margin-bottom:7px}
+.pin h5{font-size:13.5px;font-weight:700;margin-bottom:5px;letter-spacing:-.01em}
+.pin p{font-size:11.5px;line-height:1.5;color:var(--grey)}
+
+/* matrix */
+.mx{display:grid;grid-template-columns:250px 1fr;gap:40px;align-items:center;margin-top:24px}
+.mxin{border:2px solid var(--ink);border-radius:16px;padding:22px 20px;background:var(--surface)}
+.mxin .mt{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.mxin h4{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;line-height:1.25}
+.mxin p{font-size:12px;line-height:1.6;color:var(--grey)}
+.mxout{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative}
+.mxo{border:1px solid var(--line);border-radius:13px;padding:15px 14px;background:#fff}
+.mxo .mo{font-size:12.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:5px}
+.mxo .mo.red{color:var(--red)}.mxo .mo.blue{color:var(--blue)}
+.mxo p{font-size:11px;line-height:1.5;color:var(--grey)}
+.mxo.now{border-color:var(--ink);background:var(--surface)}
+.mxarrow{position:absolute;left:-28px;top:50%;transform:translateY(-50%);color:var(--red);font-size:22px;font-weight:700}
+
+/* placeholder for images Jayesh is still adding */
+.todo{border:1.5px dashed var(--red);border-radius:12px;background:#FBF1F1;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px}
+.todo span{font-size:11px;font-weight:600;color:var(--red);line-height:1.5;letter-spacing:.01em}
+
+</style></head>
+<body>
+<div id="stage">
+<div id="bar"></div>
+<section class="slide cover">
+<div class="cover"><div class="cvlogos"><img src="assets/tempest_mark.png" alt="tempest"><img src="assets/nitstone_logo.png" alt="Nitstone Finserv"></div>
+<div class="kicker red">Digital audit &middot; September 2026</div>
+<h1 class="bracket">Nitstone Finserv,<br><em>online</em>.</h1>
+<div class="titlesub">What a borrower in Bengaluru finds when they look you up, and what to do about it.</div>
+<div class="titlefoot"><span>Prepared by <strong>tempest</strong> for Nitstone Finserv</span><span class="hint">&rarr; to move &middot; F for fullscreen</span></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">02 / 30</div>
+<div class="inner vc"><div class="kicker red">01 &middot; The snapshot</div>
+<h2 class="tight">Your digital presence scores <em>47 out of 100</em>.</h2>
+<p class="lead">Each platform is scored against the same checklist: can people find you, what they see first, what you post, how new people arrive, and where interest goes next.</p>
+<div class="stgrid"><a class="st" href="https://www.youtube.com/@NitstoneFinserv" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><div class="stn">YouTube</div><div class="sth">88 subscribers</div><div class="sts red">21<span>/100</span></div></a><a class="st" href="https://www.instagram.com/nitstonefinserv/" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><defs><linearGradient id="igg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset=".8" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><path fill="url(#igg)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><div class="stn">Instagram</div><div class="sth">2,298 followers</div><div class="sts red">38<span>/100</span></div></a><a class="st" href="https://www.nitstone.com/" target="_blank" rel="noopener"><img src="assets/nitstone_logo.png" style="height:30px" alt="Nitstone"><div class="stn">Website</div><div class="sth">36 s to load on a phone</div><div class="sts red">39<span>/100</span></div></a><a class="st" href="https://www.facebook.com/NitstoneFinserv" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#0866FF" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg><div class="stn">Facebook</div><div class="sth">3,867 followers</div><div class="sts">53<span>/100</span></div></a><a class="st" href="https://www.google.com/maps/search/Nitstone+Finserv+Bangalore" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.06 12.25c0-.85-.08-1.67-.22-2.45H12v4.63h6.2a5.3 5.3 0 0 1-2.3 3.48v2.9h3.72c2.18-2 3.44-4.96 3.44-8.46z"/><path fill="#34A853" d="M12 24c3.11 0 5.72-1.03 7.62-2.79l-3.72-2.89c-1.03.69-2.35 1.1-3.9 1.1-3 0-5.54-2.02-6.45-4.74H1.71v2.98A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.55 14.68a6.9 6.9 0 0 1 0-4.4V7.3H1.71a11.5 11.5 0 0 0 0 10.36l3.84-2.98z"/><path fill="#EA4335" d="M12 4.62c1.69 0 3.2.58 4.4 1.72l3.3-3.29C17.71 1.16 15.1 0 12 0 7.52 0 3.64 2.57 1.71 6.3l3.84 2.98C6.46 6.64 9 4.62 12 4.62z"/></svg><div class="stn">Google</div><div class="sth">4.4 stars, 88 reviews</div><div class="sts">68<span>/100</span></div></a><a class="st" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=IN&q=nitstone&search_type=keyword_unordered" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#0081FB" d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"/></svg><div class="stn">Meta Ads</div><div class="sth">0 ads running</div><div class="sts">0 ads</div></a><a class="st" href="https://www.linkedin.com/company/nitstonefinserv/" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><div class="stn">LinkedIn</div><div class="sth">4,181 followers</div><div class="sts">check</div></a><a class="st" href="https://x.com/NitstoneFinserv" target="_blank" rel="noopener"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#000000" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><div class="stn">X</div><div class="sth">Same posts as everywhere</div><div class="sts">check</div></a></div>
+<div class="bignote">Reachable in 90 days: <span>about 78</span>. Scores are worked out in the appendix.</div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">03 / 30</div>
+<div class="inner vc"><div class="kicker red">02 &middot; The short version</div>
+<h2>Bengaluru is seeing your LED screens. <em>Online, nothing is there to catch them.</em></h2>
+<div class="stats">
+<div class="stat hot"><div class="sn red">0</div><div class="sp">ads running</div><div class="ss">on Meta or Google, while every gold lender near you advertises</div></div>
+<div class="stat hot"><div class="sn red">0</div><div class="sp">comments</div><div class="ss">across your last 30 Instagram posts</div></div>
+<div class="stat hot"><div class="sn red">5</div><div class="sp">views</div><div class="ss">on a typical YouTube Short, across 149 of them</div></div>
+<div class="stat hot"><div class="sn red">36 s</div><div class="sp">to load on a phone</div><div class="ss">before your homepage shows up</div></div></div>
+<div class="bignote">The money is going into outdoor. <span>The follow-up online is missing.</span></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">04 / 30</div>
+<div class="inner vc"><div class="kicker red">03 &middot; The pattern across every platform</div>
+<div class="split lean"><div><h2 class="tight">One festival post, copied to <em>every platform</em>.</h2>
+<p class="lead">The same greeting goes out on Instagram, Facebook, LinkedIn and X on the same day. On 17 September it was Vishwakarma Puja, everywhere. Each platform has a different audience, and each one gets the same picture.</p>
+<ul class="stack"><li><b>Instagram</b> needs reels that find new people nearby.</li><li><b>LinkedIn</b> is professionals, a business and professional-loan audience.</li><li><b>YouTube</b> is people searching a question.</li><li><b>Facebook</b> is an older audience that reads reviews.</li></ul>
+<div class="bignote">Four platforms, <span>one post, zero conversations</span>.</div></div>
+<div class="grid4"><div class="shot" style="height:150px"><img src="assets/shots/facebook.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Facebook</div><div class="todo" style="height:150px"><span>Instagram: the 17 Sep Vishwakarma Puja post</span></div><div class="todo" style="height:150px"><span>LinkedIn: the same post, 17 Sep</span></div><div class="todo" style="height:150px"><span>X: the same post</span></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">05 / 30</div>
+<div class="inner vc"><div class="kicker red">04 &middot; Before anything else</div>
+<h2 class="tight">Problem 1. Your Google reviews need <em>cleaning up</em>, and complaints need real replies.</h2>
+<div class="split"><div>
+<div class="stats two"><div class="stat hot"><div class="sn red">1</div><div class="sp">reply, pasted everywhere</div><div class="ss">the same line under 5-star praise and 1-star complaints</div></div>
+<div class="stat hot"><div class="sn red">3</div><div class="sp">recent complaints, no reply</div><div class="ss">two of them about loans reported wrongly to CIBIL</div></div></div>
+<blockquote class="quote">"Your kind words and constructive feedback inspire us to improve continually."<span>Owner reply under a review that said "Very bad customer service".</span></blockquote></div>
+<div><div class="f4"><div><h6>What we found</h6><p>A few recent 5-star reviews appear to come from people inside the company. Complaints get a template reply, or none.</p></div><div><h6>What it costs you</h6><p>Google removes reviews from staff when it spots them. A borrower who notices stops trusting the other 5-star reviews too. An open CIBIL complaint keeps ranking for years.</p></div><div><h6>The fix</h6><p>Remove staff reviews. Ask every customer for a review after disbursal. Reply to every review within 48 hours in your own words. Send CIBIL complaints to the grievance officer, publicly and politely.</p></div><div class="na"><h6>Now to after</h6><p><s>Unanswered</s> <i>&rarr;</i> <b>Every review answered</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">06 / 30</div>
+<div class="inner vc"><div class="kicker red">05 &middot; YouTube</div>
+<div class="split wide"><div><div class="phead"><svg width="44" height="44" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><div class="phandle">@NitstoneFinserv</div><div class="pscore"><b>21</b><span>/ 100</span></div></div><div class="pnums"><div><b>88</b><span>subscribers</span></div><div><b>1</b><span>long video</span></div><div><b>149</b><span>Shorts</span></div><div><b>29 Aug</b><span>last upload</span></div></div>
+<ol class="plist"><li>The Shorts are Instagram greetings, re-uploaded.</li><li>Nothing on the channel answers a question people search.</li></ol>
+<div class="bignote">YouTube is where people type a question. <span>Right now there is nothing to find.</span></div></div>
+<div><div class="shot" style="height:420px"><img src="assets/shots/youtube.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Channel home, 21 Sep 2026</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">07 / 30</div>
+<div class="inner vc"><div class="kicker red">05 &middot; YouTube</div>
+<h2 class="tight">Problem 2. 149 Shorts, and <em>85 of them</em> have fewer than 10 views.</h2>
+<div class="split lean"><div><svg viewBox="0 0 600 284" width="600" height="284" class="chart"><rect x="18.0" y="0.0" width="64.0" height="240.0" rx="4" fill="#BD272B"/><text x="50.0" y="-8.0" text-anchor="middle" class="cv">85</text><text x="50.0" y="260" text-anchor="middle" class="cl">0 to 9</text><rect x="118.0" y="189.2" width="64.0" height="50.8" rx="4" fill="#DCE2EB"/><text x="150.0" y="181.2" text-anchor="middle" class="cv">18</text><text x="150.0" y="260" text-anchor="middle" class="cl">10 to 49</text><rect x="218.0" y="169.4" width="64.0" height="70.6" rx="4" fill="#DCE2EB"/><text x="250.0" y="161.4" text-anchor="middle" class="cv">25</text><text x="250.0" y="260" text-anchor="middle" class="cl">50 to 99</text><rect x="318.0" y="192.0" width="64.0" height="48.0" rx="4" fill="#DCE2EB"/><text x="350.0" y="184.0" text-anchor="middle" class="cv">17</text><text x="350.0" y="260" text-anchor="middle" class="cl">100 to 499</text><rect x="418.0" y="238.0" width="64.0" height="2.0" rx="4" fill="#DCE2EB"/><text x="450.0" y="230.0" text-anchor="middle" class="cv">0</text><text x="450.0" y="260" text-anchor="middle" class="cl">500 to 999</text><rect x="518.0" y="228.7" width="64.0" height="11.3" rx="4" fill="#DCE2EB"/><text x="550.0" y="220.7" text-anchor="middle" class="cv">4</text><text x="550.0" y="260" text-anchor="middle" class="cl">1,000+</text></svg><div class="cap">Views per Short, all 149 on the channel. Median 5 views. Read from the public channel, 21 Sep 2026.</div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>12,936 views across 149 Shorts. Most are festival greetings copied from Instagram.</p></div><div><h6>What it costs you</h6><p>Every Short takes time to make and reaches almost nobody. It also teaches YouTube to show the channel to nobody.</p></div><div><h6>The fix</h6><p>Stop re-uploading greetings. Cut Shorts only from longer explainer videos, so each one points to a full answer.</p></div><div class="na"><h6>Now to after</h6><p><s>21</s> <i>&rarr;</i> <b>35</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">08 / 30</div>
+<div class="inner vc"><div class="kicker red">05 &middot; YouTube</div>
+<h2 class="tight">Problem 3. Your blog answers what borrowers search. <em>Your YouTube doesn't.</em></h2>
+<div class="split"><div class="ba"><div><div class="tag now">Your latest blog posts</div><ul class="stack blue"><li>How much can you save with a gold loan transfer?</li><li>EMI gold loan: what it is and how it works</li><li>Jewel loan vs gold loan: are they the same?</li><li>Can you take multiple gold loans?</li><li>Gold loan vs personal loan in 2026</li></ul></div>
+<div><div class="tag next">Your latest YouTube titles</div><ul class="stack"><li>Happy National Sports Day!</li><li>Happy Raksha Bandhan</li><li>World Photography Day</li><li>Happy Independence Day!</li><li>Happy Guru Purnima!</li></ul></div></div>
+<div><div class="gen" style="height:250px"><img src="assets/gen/yt_explainer.jpg" alt=""></div>
+<p class="gencap">What it could be: one person from your team, 8 to 12 minutes, one question per video, in Kannada and English. The script is already written, it's the blog.</p></div></div>
+<div class="bignote">IIFL's and Moneyview's money explainers get a median of <span>150,000+ views</span>. The research is already done every month.</div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">09 / 30</div>
+<div class="inner vc"><div class="kicker red">06 &middot; Instagram</div>
+<div class="split wide"><div><div class="phead"><svg width="44" height="44" viewBox="0 0 24 24"><defs><linearGradient id="igg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset=".8" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><path fill="url(#igg)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><div class="phandle">@nitstonefinserv</div><div class="pscore"><b>38</b><span>/ 100</span></div></div><div class="pnums"><div><b>2,298</b><span>followers</span></div><div><b>1,041</b><span>posts</span></div><div><b>0</b><span>comments, last 30</span></div><div><b>0</b><span>location tags</span></div></div>
+<ol class="plist"><li>Most posts are greetings, and nobody replies.</li><li>The profile doesn't say what you do, or where.</li><li>Nothing brings new people in: no location tags, no faces, no collaborations.</li></ol>
+<div class="bignote">Posting five times a week is real effort. <span>It isn't earning anything back.</span></div></div>
+<div><div class="todo" style="height:420px"><span>Instagram profile, logged in: bio, highlights and the three pinned posts</span></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">10 / 30</div>
+<div class="inner vc"><div class="kicker red">06 &middot; Instagram</div>
+<h2 class="tight">Problem 4. <em>15 of your last 30 posts</em> are greetings. Not one post has a comment.</h2>
+<div class="split lean"><div><svg viewBox="0 0 640 264" width="640" height="264" class="chart"><rect x="3.8" y="181.5" width="13.7" height="38.5" rx="4" fill="#BD272B"/><text x="10.7" y="173.5" text-anchor="middle" class="cv">7</text><text x="10.7" y="240" text-anchor="middle" class="cl">04/08</text><rect x="25.2" y="170.5" width="13.7" height="49.5" rx="4" fill="#BD272B"/><text x="32.0" y="162.5" text-anchor="middle" class="cv">9</text><rect x="46.5" y="187.0" width="13.7" height="33.0" rx="4" fill="#BD272B"/><text x="53.3" y="179.0" text-anchor="middle" class="cv">6</text><rect x="67.8" y="203.5" width="13.7" height="16.5" rx="4" fill="#BD272B"/><text x="74.7" y="195.5" text-anchor="middle" class="cv">3</text><rect x="89.2" y="192.5" width="13.7" height="27.5" rx="4" fill="#DCE2EB"/><text x="96.0" y="184.5" text-anchor="middle" class="cv">5</text><rect x="110.5" y="192.5" width="13.7" height="27.5" rx="4" fill="#DCE2EB"/><text x="117.3" y="184.5" text-anchor="middle" class="cv">5</text><rect x="131.8" y="198.0" width="13.7" height="22.0" rx="4" fill="#BD272B"/><text x="138.7" y="190.0" text-anchor="middle" class="cv">4</text><text x="138.7" y="240" text-anchor="middle" class="cl">14/08</text><rect x="153.2" y="181.5" width="13.7" height="38.5" rx="4" fill="#DCE2EB"/><text x="160.0" y="173.5" text-anchor="middle" class="cv">7</text><rect x="174.5" y="198.0" width="13.7" height="22.0" rx="4" fill="#BD272B"/><text x="181.3" y="190.0" text-anchor="middle" class="cv">4</text><rect x="195.8" y="187.0" width="13.7" height="33.0" rx="4" fill="#BD272B"/><text x="202.7" y="179.0" text-anchor="middle" class="cv">6</text><rect x="217.2" y="176.0" width="13.7" height="44.0" rx="4" fill="#DCE2EB"/><text x="224.0" y="168.0" text-anchor="middle" class="cv">8</text><rect x="238.5" y="110.0" width="13.7" height="110.0" rx="4" fill="#BD272B"/><text x="245.3" y="102.0" text-anchor="middle" class="cv">20</text><rect x="259.8" y="176.0" width="13.7" height="44.0" rx="4" fill="#DCE2EB"/><text x="266.7" y="168.0" text-anchor="middle" class="cv">8</text><text x="266.7" y="240" text-anchor="middle" class="cl">21/08</text><rect x="281.2" y="181.5" width="13.7" height="38.5" rx="4" fill="#BD272B"/><text x="288.0" y="173.5" text-anchor="middle" class="cv">7</text><rect x="302.5" y="181.5" width="13.7" height="38.5" rx="4" fill="#DCE2EB"/><text x="309.3" y="173.5" text-anchor="middle" class="cv">7</text><rect x="323.8" y="181.5" width="13.7" height="38.5" rx="4" fill="#DCE2EB"/><text x="330.7" y="173.5" text-anchor="middle" class="cv">7</text><rect x="345.2" y="55.0" width="13.7" height="165.0" rx="4" fill="#BD272B"/><text x="352.0" y="47.0" text-anchor="middle" class="cv">30</text><rect x="366.5" y="165.0" width="13.7" height="55.0" rx="4" fill="#BD272B"/><text x="373.3" y="157.0" text-anchor="middle" class="cv">10</text><rect x="387.8" y="0.0" width="13.7" height="220.0" rx="4" fill="#BD272B"/><text x="394.7" y="-8.0" text-anchor="middle" class="cv">40</text><text x="394.7" y="240" text-anchor="middle" class="cl">03/09</text><rect x="409.2" y="181.5" width="13.7" height="38.5" rx="4" fill="#DCE2EB"/><text x="416.0" y="173.5" text-anchor="middle" class="cv">7</text><rect x="430.5" y="209.0" width="13.7" height="11.0" rx="4" fill="#BD272B"/><text x="437.3" y="201.0" text-anchor="middle" class="cv">2</text><rect x="451.8" y="181.5" width="13.7" height="38.5" rx="4" fill="#DCE2EB"/><text x="458.7" y="173.5" text-anchor="middle" class="cv">7</text><rect x="473.2" y="192.5" width="13.7" height="27.5" rx="4" fill="#DCE2EB"/><text x="480.0" y="184.5" text-anchor="middle" class="cv">5</text><rect x="494.5" y="209.0" width="13.7" height="11.0" rx="4" fill="#BD272B"/><text x="501.3" y="201.0" text-anchor="middle" class="cv">2</text><rect x="515.8" y="187.0" width="13.7" height="33.0" rx="4" fill="#DCE2EB"/><text x="522.7" y="179.0" text-anchor="middle" class="cv">6</text><text x="522.7" y="240" text-anchor="middle" class="cl">08/09</text><rect x="537.2" y="60.5" width="13.7" height="159.5" rx="4" fill="#DCE2EB"/><text x="544.0" y="52.5" text-anchor="middle" class="cv">29</text><rect x="558.5" y="165.0" width="13.7" height="55.0" rx="4" fill="#DCE2EB"/><text x="565.3" y="157.0" text-anchor="middle" class="cv">10</text><rect x="579.8" y="209.0" width="13.7" height="11.0" rx="4" fill="#DCE2EB"/><text x="586.7" y="201.0" text-anchor="middle" class="cv">2</text><rect x="601.2" y="198.0" width="13.7" height="22.0" rx="4" fill="#DCE2EB"/><text x="608.0" y="190.0" text-anchor="middle" class="cv">4</text><rect x="622.5" y="33.0" width="13.7" height="187.0" rx="4" fill="#BD272B"/><text x="629.3" y="25.0" text-anchor="middle" class="cv">34</text></svg>
+<div class="legend"><span><i class="sw r"></i>Loan or gold posts</span><span><i class="sw g"></i>Greetings and "day" posts</span></div>
+<div class="cap">Likes per post, last 30 posts, 3 Aug to 19 Sep 2026 (Apify). The account's total views for the period will be higher, because older posts keep earning views.</div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>Your best post was a useful one: "Why can two similar-looking gold pieces have different values?", 40 likes. Greetings sit at 2 to 10.</p></div><div><h6>What it costs you</h6><p>A borrower scrolling your page sees wishes, not reasons to walk into a branch.</p></div><div><h6>The fix</h6><p>Keep greetings for the biggest festivals only. Put the effort into short videos that answer one gold loan question, with a real person on camera.</p></div><div class="na"><h6>Now to after</h6><p><s>38</s> <i>&rarr;</i> <b>55</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">11 / 30</div>
+<div class="inner vc"><div class="kicker red">06 &middot; Instagram</div>
+<h2 class="tight">Problem 5. The profile doesn't say <em>what you do, or where</em>.</h2>
+<div class="ba mock2"><div><div class="tag now">Today</div><div class="igmock"><div class="igtop"><img src="assets/nitstone_avatar.jpg" alt=""><div><b>nitstonefinserv</b><span>2,298 followers</span></div></div>
+<p class="ign">Nitstone Finserv</p><p>We are one of the top finance companies in India. We lend personal loans, gold loans, education loans, and more.</p><p class="igl">nitstone.com</p></div></div>
+<div><div class="tag next">Suggested</div><div class="igmock good"><div class="igtop"><img src="assets/nitstone_avatar.jpg" alt=""><div><b>nitstonefinserv</b><span>Gold loan &middot; Bengaluru</span></div></div>
+<p class="ign">Nitstone | Gold Loan Bengaluru</p><p>RBI-registered NBFC. Quick gold loans at 4 branches: Cunningham Rd, RR Nagar, Lingarajapuram, Bagalur. Walk in or WhatsApp us.</p><p class="igl">nitstone.com/gold-loan</p><div class="igbtn"><span>Call</span><span>WhatsApp</span></div></div></div></div>
+<div class="pts"><div class="pt r"><h4>Name field</h4><p>Instagram search only reads the username and the name. "Gold Loan Bengaluru" makes you findable.</p></div>
+<div class="pt r"><h4>No big claims</h4><p>"One of the top finance companies in India" is a claim ad rules ask you to prove. Say what you do instead.</p></div>
+<div class="pt r"><h4>Three pinned posts</h4><p>How a gold loan works here. Where the branches are. A real customer.</p></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">12 / 30</div>
+<div class="inner vc"><div class="kicker red">07 &middot; Website</div>
+<div class="split wide"><div><div class="phead"><img src="assets/nitstone_logo.png" style="height:44px" alt="Nitstone"><div class="phandle">nitstone.com</div><div class="pscore"><b>39</b><span>/ 100</span></div></div><div class="pnums"><div><b>36 s</b><span>to load on a phone</span></div><div><b>10.5 MB</b><span>page size</span></div><div><b>0</b><span>working analytics</span></div><div><b>0</b><span>phone numbers on the homepage</span></div></div>
+<ol class="plist"><li>It is too slow on a phone.</li><li>You can't see who visits.</li><li>There's no quick way to call or WhatsApp.</li></ol>
+<div class="bignote">Scored as provisional. <span>Website checks are being finalised.</span></div></div>
+<div class="phoneshot"><div class="shot" style="height:440px"><img src="assets/shots/website.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Homepage on a phone, 21 Sep 2026</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">13 / 30</div>
+<div class="inner vc"><div class="kicker red">07 &middot; Website</div>
+<h2 class="tight">Problem 6. The site takes <em>36 seconds</em> to load on a phone.</h2>
+<div class="split"><div class="bigwrap"><div class="bignum">36<span>s</span></div><div class="cap">Largest content shown after 36.0 s. Mobile performance score 44/100, page weight 10.5 MB. Lighthouse mobile test, 21 Sep 2026.</div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>Most of the 10.5 MB is images that load before anything useful shows.</p></div><div><h6>What it costs you</h6><p>People who tap through from your LED screens or a post leave long before 36 seconds.</p></div><div><h6>The fix</h6><p>Compress images, get the page under 2 MB, load the top of the page first. Aim for under 3 seconds.</p></div><div class="na"><h6>Now to after</h6><p><s>36 s</s> <i>&rarr;</i> <b>under 3 s</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">14 / 30</div>
+<div class="inner vc"><div class="kicker red">07 &middot; Website</div>
+<h2 class="tight">Problem 7. For three years, <em>no visit has been counted</em>.</h2>
+<div class="split"><div><div class="codebox"><div><span class="k">Found:</span> Universal Analytics UA-106146624-1</div><div class="bad">Google switched this off in July 2023</div><div><span class="k">Missing:</span> GA4</div><div class="bad">No tag, so no visits, forms or calls are recorded</div><div><span class="k">Installed but idle:</span> Meta Pixel, Google Ads tag</div><div class="ok">Ready for ads the day they start</div></div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>The only analytics tag on the site stopped working in July 2023. The Meta Pixel and Google Ads tag are installed, with no ads running.</p></div><div><h6>What it costs you</h6><p>You can't tell which post, branch or campaign brings borrowers, so you can't tell where to spend.</p></div><div><h6>The fix</h6><p>Install GA4 this week. Track Quick Apply, call taps and WhatsApp taps as events.</p></div><div class="na"><h6>Now to after</h6><p><s>Blind</s> <i>&rarr;</i> <b>Every lead counted</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">15 / 30</div>
+<div class="inner vc"><div class="kicker red">07 &middot; Website</div>
+<h2 class="tight">Problem 8. There is <em>no phone number</em> on the homepage.</h2>
+<div class="split"><div class="pts one"><div class="pt r"><h4>No call, no WhatsApp</h4><p>The only button is a Quick Apply form. Gold loans are urgent and local. People want to talk and walk in today.</p></div>
+<div class="pt r"><h4>RBI number not shown</h4><p>It's the first thing a careful borrower checks. It belongs in the footer of every page.</p></div>
+<div class="pt b"><h4>No gold loan page for ads</h4><p>Ads and posts should land on one gold loan page: rate, per-gram value, calculator, four branches with maps.</p></div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>Homepage has one action, a form. The contact page lists one landline.</p></div><div><h6>What it costs you</h6><p>A form asks someone in a hurry to wait. The next lender's number is one search away.</p></div><div><h6>The fix</h6><p>Tap-to-call and WhatsApp at the top of every page. Branches with maps. RBI number in the footer.</p></div><div class="na"><h6>Now to after</h6><p><s>0 of 20</s> <i>&rarr;</i> <b>15 of 20</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">16 / 30</div>
+<div class="inner vc"><div class="kicker red">08 &middot; Facebook</div>
+<div class="split wide"><div><div class="phead"><svg width="44" height="44" viewBox="0 0 24 24"><path fill="#0866FF" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg><div class="phandle">Nitstone Finserv | Bangalore</div><div class="pscore"><b>53</b><span>/ 100</span></div></div><div class="pnums"><div><b>3,867</b><span>followers</span></div><div><b>3</b><span>reviews</span></div><div><b>Not rated</b><span>shown on the page</span></div><div><b>2017</b><span>page created</span></div></div>
+<div class="f4"><div><h6>What we found</h6><p>Occasional posts, mostly office festivals. The latest is the LED campaign. Only 3 recommendations, so the page shows no rating. The phone listed differs from Google's.</p></div><div><h6>What it costs you</h6><p>Facebook's older audience reads reviews before they borrow. There's nothing here to read.</p></div><div><h6>The fix</h6><p>Ask for a Facebook recommendation in the same message as the Google review. Post the same useful videos, not just greetings. One phone number.</p></div><div class="na"><h6>Now to after</h6><p><s>53</s> <i>&rarr;</i> <b>68</b></p></div></div></div>
+<div><div class="shot" style="height:360px"><img src="assets/shots/facebook.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Facebook page, 21 Sep 2026</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">17 / 30</div>
+<div class="inner vc"><div class="kicker red">09 &middot; LinkedIn and X</div>
+<h2 class="tight">LinkedIn is your <em>biggest audience</em>, and it gets festival posts.</h2>
+<div class="split"><div>
+<div class="pgrid"><div><svg width="30" height="30" viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><b>4,181</b><span>followers, mostly professionals</span></div><div><svg width="26" height="26" viewBox="0 0 24 24"><path fill="#000000" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><b>Same posts</b><span>as Instagram and Facebook</span></div></div>
+<ul class="stack"><li><b>LinkedIn:</b> the audience for business, professional and CA loans. Your board and leadership are strong, and not visible here. Let the leadership post: what's changing in gold lending, how you decide on a loan.</li>
+<li><b>X:</b> keep the handle, stop spending time on it.</li></ul></div>
+<div><div class="shot" style="height:250px"><img src="assets/shots/linkedin.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">LinkedIn company page, 21 Sep 2026</div><div class="todo" style="height:110px"><span>LinkedIn posts: the 17 Sep Vishwakarma Puja repost</span></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">18 / 30</div>
+<div class="inner vc"><div class="kicker red">10 &middot; Google</div>
+<div class="split wide"><div><div class="phead"><svg width="44" height="44" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.06 12.25c0-.85-.08-1.67-.22-2.45H12v4.63h6.2a5.3 5.3 0 0 1-2.3 3.48v2.9h3.72c2.18-2 3.44-4.96 3.44-8.46z"/><path fill="#34A853" d="M12 24c3.11 0 5.72-1.03 7.62-2.79l-3.72-2.89c-1.03.69-2.35 1.1-3.9 1.1-3 0-5.54-2.02-6.45-4.74H1.71v2.98A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.55 14.68a6.9 6.9 0 0 1 0-4.4V7.3H1.71a11.5 11.5 0 0 0 0 10.36l3.84-2.98z"/><path fill="#EA4335" d="M12 4.62c1.69 0 3.2.58 4.4 1.72l3.3-3.29C17.71 1.16 15.1 0 12 0 7.52 0 3.64 2.57 1.71 6.3l3.84 2.98C6.46 6.64 9 4.62 12 4.62z"/></svg><div class="phandle">4 branch listings</div><div class="pscore"><b>68</b><span>/ 100</span></div></div><div class="pnums"><div><b>4.4</b><span>head office, 88 reviews</span></div><div><b>2</b><span>Lingarajapuram</span></div><div><b>2</b><span>RR Nagar</span></div><div><b>0</b><span>Bagalur</span></div></div>
+<p class="lead sm">Good news first: page 1 for your name is all yours, with no bad press. The gaps are at the branches.</p>
+<table class="nap"><tr><th>Where</th><th>Phone listed</th></tr><tr><td>Google, head office</td><td>082961 96225</td></tr><tr><td>Facebook</td><td>082961 76225</td></tr><tr><td>Website</td><td>080 47946000</td></tr><tr><td>RR Nagar, WhatsApp</td><td>096067 68578</td></tr><tr><td>Bagalur</td><td>091080 46686</td></tr></table>
+<div class="bignote">Five numbers. <span>Pick one, and one WhatsApp.</span></div></div>
+<div><div class="shot" style="height:440px"><img src="assets/shots/gbp_list.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Your four Google listings, 21 Sep 2026</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">19 / 30</div>
+<div class="inner vc"><div class="kicker red">10 &middot; Google</div>
+<h2 class="tight">Problem 9. Your branches <em>don't show up</em> when people search nearby.</h2>
+<div class="split lean"><div><div class="shot" style="height:360px"><img src="assets/shots/gbp_category.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Google Maps, 'gold loan near Rajarajeshwari Nagar', 21 Sep 2026</div></div>
+<div><div class="f4"><div><h6>What we found</h6><p>You have a branch in Rajarajeshwari Nagar. The results show Manappuram (4.7 and 4.4 stars), Muthoot and Muthoot FinCorp. Nitstone isn't there.</p></div><div><h6>What it costs you</h6><p>This is the search a walk-in gold loan customer actually makes. Not in the map means not an option.</p></div><div><h6>The fix</h6><p>Fill every branch listing: photos, hours, one phone, gold loan as a service, a weekly post. Reviews per branch.</p></div><div class="na"><h6>Now to after</h6><p><s>68</s> <i>&rarr;</i> <b>80</b></p></div></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">20 / 30</div>
+<div class="inner vc"><div class="kicker red">11 &middot; Your competitors</div>
+<h2 class="tight">Every gold lender around you is advertising. <em>You're the only one at zero.</em></h2>
+<div class="split lean"><div class="adrow"><div class="shot" style="height:150px"><img src="assets/shots/ads_nitstone.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Nitstone: no ads, now or in the past</div><div class="shot" style="height:190px"><img src="assets/shots/ads_rupeek.jpg" style="object-position:top center;object-fit:cover" alt=""></div><div class="cap">Rupeek: dozens of gold loan ads live</div></div>
+<div><table class="cmp adt"><thead><tr><th style="text-align:left">Advertiser</th><th class="h2c">Ads live</th></tr></thead><tbody>
+<tr><th>Nitstone Finserv</th><td class="bad">0</td></tr><tr><th>Oro Money</th><td>90+</td></tr><tr><th>Rupeek (Bengaluru)</th><td>60+</td></tr><tr><th>Manappuram</th><td>40+ across 3 group pages</td></tr><tr><th>The Muthoot Group</th><td>15+</td></tr><tr><th>IIFL Finance</th><td>11+</td></tr></tbody></table>
+<div class="cap">Meta Ad Library, India, active ads, 21 Sep 2026. Counts are each brand's own ads among the first results. Spend is not public and we don't guess it.</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">21 / 30</div>
+<div class="inner vc"><div class="kicker red">11 &middot; What they run</div>
+<h2 class="tight">Oro Money is advertising <em>the exact topic your blog covers</em>.</h2>
+<div class="split lean"><div><div class="shot" style="height:330px"><img src="assets/shots/ads_oro_takeover.jpg" style="object-position:top center;object-fit:contain" alt=""></div><div class="cap">Oro Money gold loan ads, Meta Ad Library, 21 Sep 2026</div></div>
+<div><ul class="stack"><li><b>The offer:</b> move your gold loan to us and pay less, from 0.83% a month. Your blog's latest post is about gold loan transfers.</li>
+<li><b>Local:</b> named neighbourhoods and the local language, Tamil and Telugu.</li><li><b>Simple action:</b> "WhatsApp us your receipt", or a Get Offer form.</li><li><b>Cheap to make:</b> one creative runs as several ads. Their video ads are staff filmed on a phone.</li></ul>
+<div class="bignote">Nobody is doing this <span>in Kannada, in Bengaluru</span>.</div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">22 / 30</div>
+<div class="inner vc"><div class="kicker red">11 &middot; How you compare</div>
+<h2 class="tight">The big lenders win on ads, YouTube and branches. <em>Not on Instagram.</em></h2>
+<table class="cmp bench"><thead><tr><th style="text-align:left"></th><th class="h2c">Instagram</th><th class="h1">YouTube subscribers</th><th class="h1">LinkedIn</th><th class="h3c">What stands out</th></tr></thead><tbody>
+<tr><th>Nitstone</th><td>2.3K, 0 comments</td><td>88</td><td>4.2K</td><td>Greetings, no ads</td></tr>
+<tr><th>Rupeek (Bengaluru)</th><td>10.8K, inactive since 2024</td><td>n/a</td><td>247K</td><td>Stopped posting, runs ads</td></tr>
+<tr><th>Oro Money</th><td>15K</td><td>n/a</td><td>5.5K</td><td>Local-language takeover ads</td></tr>
+<tr><th>Manappuram</th><td>95K, ~800 views a reel</td><td>749K</td><td>141K</td><td>Daily offer posts, branch openings</td></tr>
+<tr><th>IIFL Finance</th><td>153K</td><td>137K, explainers 149K median</td><td>234K</td><td>"Gold loan vs personal loan" videos</td></tr>
+<tr><th>Muthoot Group</th><td>n/a</td><td>n/a</td><td>319K (FinCorp)</td><td>Creator ads with a radio host</td></tr>
+<tr><th>KreditBee, Moneyview</th><td>213K, 216K</td><td>73K, 111K</td><td>57K, 153K</td><td>Creator ads, money explainers</td></tr></tbody></table>
+<div class="cap">Public profiles, Apify and YouTube, 21 Sep 2026. KreditBee and Moneyview are personal loan apps, shown for content that works.</div>
+<div class="bignote">Their Instagram is weak too. <span>The opening is useful video in Kannada, and ads around your branches.</span></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">23 / 30</div>
+<div class="inner vc"><div class="kicker red">12 &middot; What it could look like</div>
+<div class="split wide"><div><h2 class="tight">Your version: a branch officer, <em>in Kannada</em>, on a phone.</h2>
+<div class="concept"><div><h6>Hook, first 3 seconds</h6><p>"Your gold is sitting at another lender at a higher rate?"</p></div>
+<div><h6>Three lines on screen</h6><p>Per-gram value today &middot; your rate &middot; same-day money <span class="blank">[confirm]</span></p></div>
+<div><h6>Where it runs</h6><p>A few km around each of your 4 branches, on Instagram and Facebook</p></div>
+<div><h6>Where the tap goes</h6><p>Call or WhatsApp the nearest branch. Not a form.</p></div></div>
+<div class="bignote">Same shoot, four uses: <span>ad, reel, YouTube Short, Google post.</span></div></div>
+<div><div class="gen tall"><img src="assets/gen/phone_ad.jpg" alt=""></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">24 / 30</div>
+<div class="inner vc"><div class="kicker red">13 &middot; What this does when it's done</div>
+<h2 class="tight">A finance brand we run on Instagram: <em>124 leads in one month, with zero ad spend</em>.</h2>
+<p class="lead">Expert Panel works in loans and borrower rights, a category with strict rules on what you can say. Five months in, August 2026:</p>
+<div class="stats"><div class="stat hot"><div class="sn red">124</div><div class="sp">organic leads</div><div class="ss">in August alone</div></div>
+<div class="stat hot"><div class="sn red">79</div><div class="sp">became paying customers</div><div class="ss">64% of leads</div></div>
+<div class="stat"><div class="sn">2 &rarr; 13</div><div class="sp">posts a month</div><div class="ss">April to August</div></div>
+<div class="stat"><div class="sn">41,306</div><div class="sp">views, best reel</div><div class="ss">a specific borrower situation, not a general topic</div></div></div>
+<div class="pts"><div class="pt r"><h4>A real person beats a logo</h4><p>Talking-head videos brought more follows than any other format. In finance, people trust a face.</p></div>
+<div class="pt r"><h4>Compliance before filming</h4><p>Topics and scripts approved before the shoot. Posts pulled after going live dropped to almost none.</p></div>
+<div class="pt b"><h4>Measured on leads, not likes</h4><p>Followers grew about 262 in five months. Leads were the number that mattered.</p></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">25 / 30</div>
+<div class="inner vc"><div class="kicker red">14 &middot; Where leads come from</div>
+<div class="split"><div><h2 class="tight">Three steps from <em>seeing you</em> to <em>walking in</em>.</h2>
+<ul class="stack"><li><b>Top:</b> LED screens are working. Reels and Shorts are greetings, so they don't add to it.</li>
+<li><b>Middle:</b> no YouTube answers, reviews that need cleaning up. This is where people compare lenders.</li>
+<li><b>Bottom:</b> no ads, branches missing from the map, no call button on the site.</li></ul>
+<div class="bignote">Red is where borrowers <span>drop off today</span>.</div></div>
+<div><div class="gen white"><img src="assets/gen/funnel_tofu.jpg" alt=""></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">26 / 30</div>
+<div class="inner vc"><div class="kicker red">15 &middot; Stages of awareness</div>
+<div class="split"><div><h2 class="tight">You lose people <em>in the middle</em>, while they're deciding.</h2>
+<p class="lead">Someone knows they need money this week. They're weighing gold loan against personal loan, and one lender against another. That's the question your blog answers, and your videos, reviews and ads don't.</p>
+<div class="bignote">The LED screens build the top. <span>The branches close the bottom. The middle is empty.</span></div></div>
+<div><div class="gen white"><img src="assets/gen/funnel_awareness.jpg" alt=""></div></div></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">27 / 30</div>
+<div class="inner vc"><div class="kicker red">16 &middot; The next 90 days</div>
+<h2 class="tight">From 47 to <em>about 78</em>, in three steps.</h2>
+<div class="rail"><div class="ph"><div class="phw">Weeks 1 to 2</div><h4>Fix trust and tracking</h4><ol><li>Remove staff reviews, start review requests</li><li>Reply to every open review, CIBIL complaints first</li><li>One phone number everywhere</li><li>GA4, with call and WhatsApp events</li><li>Call and WhatsApp buttons, RBI number in footer</li></ol></div><div class="ph"><div class="phw">Weeks 3 to 6</div><h4>Build what people find</h4><ol><li>Instagram name, bio, link, pinned posts</li><li>Branch listings filled, weekly Google posts</li><li>First 4 YouTube explainers from the blog</li><li>Greetings cut to major festivals only</li><li>Site speed fixes, gold loan landing page</li></ol></div><div class="ph"><div class="phw">Weeks 7 to 12</div><h4>Switch on demand</h4><ol><li>Kannada gold loan ads around each branch</li><li>Call or WhatsApp as the only action</li><li>One local creator collaboration a month</li><li>Leadership posting on LinkedIn</li><li>Monthly report on leads, not likes</li></ol></div></div>
+<div class="cap">What changes is stated as a mechanism, not a promised number of loans. Integrity comes first because every review target depends on it.</div></div>
+</section>
+<section class="slide dark"><div class="pageno">28 / 30</div>
+<div class="inner vc"><div class="kicker red">17 &middot; What we need from you</div>
+<h2 class="tight">Five things to get started.</h2>
+<ol class="need"><li>Instagram and Facebook insights access, to check how the 29 August gold loan reel reached 5,948 views</li>
+<li>Google Business Profile access for all four branches</li><li>How customers find you today, if branches track it</li>
+<li><span class="blank">[Loans a month, and the gold loan share]</span> for the before-and-after baseline</li><li>Who from your team is happy to be on camera</li></ol></div>
+</section>
+<section class="slide dark closing"><div class="pageno">29 / 30</div>
+<div class="closewrap"><div class="logocard"><img src="assets/tempest_mark.png" alt="tempest"></div>
+<div class="closeline">Thank <em>you</em>.</div><div class="closefoot">Nitstone Finserv digital audit &middot; <span class="red">September 2026</span></div></div>
+</section>
+<section class="slide "><img class="slogo" src="assets/tempest_mark.png" alt="tempest"><div class="pageno">30 / 30</div>
+<div class="inner vc"><div class="kicker red">Appendix &middot; How the scores work</div>
+<h2 class="tight">Five blocks, <em>20 points each</em>, per platform.</h2>
+<p class="lead sm">Identity, what people see first, content, how new people arrive, and where interest goes. Each check is keep (full points), fix (half) or kill (zero). Checks we could not see are left out. Composite weights: Google 30, website 20, Instagram 20, YouTube 15, Facebook 15.</p>
+<table class="cmp apx"><tbody><tr><th>YouTube</th><td class='sc'>21</td><td class='why'>Identity 16.7 (handle keep, name without search terms fix, avatar keep) · Shelf 0 (no trailer, no playlists) · Content 4 (Shorts only, gap, greeting titles, thumbnails, blog unused) · Discovery 0 · Conversion 0</td></tr><tr><th>Instagram</th><td class='sc'>38</td><td class='why'>Identity 17.5 (name field fix) · Shelf 5 (bio kill, link fix; highlights and pins not yet seen) · Content 8.3 (greetings, no faces, cadence keep) · Discovery 4 (no location tags, no collaborations) · Conversion 3.3</td></tr><tr><th>Website</th><td class='sc'>39</td><td class='why'>Provisional. 3.5 of 9 checks: form keep, indexed keep, product pages keep, landing page fix; speed, analytics, attribution, call/WhatsApp, RBI number kill</td></tr><tr><th>Facebook</th><td class='sc'>53</td><td class='why'>Identity 20 · Shelf 5 (About fix, reviews kill) · Content 10 (same post as everywhere, reels fix, cadence fix) · Discovery 5 · Conversion 13.3</td></tr><tr><th>Google</th><td class='sc'>68</td><td class='why'>Identity 20 · Shelf 12.9 (replies and review integrity kill, phone fix) · Content 10 (branch listings fix) · Discovery 10 (map pack kill) · Conversion 15</td></tr></tbody></table></div>
+</section>
+<div id="nav"><button id="prev" aria-label="Previous slide">&#8249;</button><button id="next" aria-label="Next slide">&#8250;</button></div>
+</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar'),
+      stage=document.getElementById('stage'),nav=document.getElementById('nav');
+let cur=Math.min(Math.max(parseInt(location.hash.slice(1))||0,0),slides.length-1);
+function show(i){
+  cur=Math.min(Math.max(i,0),slides.length-1);
+  slides.forEach((s,j)=>s.classList.toggle('on',j===cur));
+  bar.style.width=(cur/(slides.length-1)*100)+'%';
+  nav.classList.toggle('hide',cur===0);
+  history.replaceState(null,'','#'+cur);
+}
+function fit(){
+  const s=Math.min(innerWidth/1280,innerHeight/720);
+  stage.style.transform=`translate(-50%,-50%) scale(${s})`;
+}
+addEventListener('resize',fit);fit();show(cur);
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')show(cur+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')show(cur-1);
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key==='f'||e.key==='F')document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+});
+document.getElementById('prev').onclick=()=>show(cur-1);
+document.getElementById('next').onclick=()=>show(cur+1);
+</script>
+</body></html>
